@@ -1,0 +1,27 @@
+#VRML_SIM V8.1.0 utf8
+PROTO Obstacle [
+  field SFVec3f translation 0 0.025 0
+  field SFColor color 1 0.501961 0.25098
+  field SFString name "obstacle"
+]
+{
+  Solid {
+    translation IS translation
+    children [
+      Shape {
+        appearance Appearance {
+          material Material {
+            diffuseColor IS color
+          }
+        }
+        geometry DEF CYLINDER1 Cylinder {
+          height 0.05
+          radius 0.04
+          subdivision 24
+        }
+      }
+    ]
+    name IS name
+    boundingObject USE CYLINDER1
+  }
+}

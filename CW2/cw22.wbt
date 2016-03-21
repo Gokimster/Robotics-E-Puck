@@ -1,0 +1,369 @@
+#VRML_SIM V8.3.0 utf8
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.776549 0.59695 0.201547 4.54981
+  position -0.300842 2.31658 -0.0353822
+}
+DirectionalLight {
+  direction -0.3 -0.9 0
+}
+Background {
+  skyColor [
+    1 1 1
+  ]
+}
+E-puck {
+  hidden linearVelocity_0 -0.0053226 2.11725e-07 0.00455999
+  hidden angularVelocity_0 -0.0304794 0.11184 -0.035591
+  hidden translation_1 -0.0260006 0.0200012 1.60581e-07
+  hidden rotation_1 1 3.79794e-05 7.5613e-05 0.995551
+  hidden linearVelocity_1 -0.00735136 -1.12185e-06 0.0063014
+  hidden angularVelocity_1 0.324077 0.111848 0.378052
+  hidden translation_2 0.0260007 0.0200014 -1.4741e-07
+  hidden rotation_2 1 -1.4925e-06 6.66249e-07 -2.53546
+  hidden linearVelocity_2 -0.00293911 -1.16878e-06 0.00251264
+  hidden angularVelocity_2 0.116652 0.111842 0.1365
+  translation 0.499397 0.250436 0.0026363
+  rotation 0.00312463 0.999994 0.00143853 -0.8593
+}
+DEF Beam Solid {
+  translation 0 0 -0.45
+  children [
+    DEF BeamShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 1 1 1
+          emissiveColor 0.8 0.8 0.8
+        }
+      }
+      geometry Box {
+        size 0.05 0.5 0.1
+      }
+    }
+  ]
+}
+DEF Beam Solid {
+  translation 0 0 0.45
+  children [
+    DEF BeamShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.8 0.8 0.8
+        }
+      }
+      geometry Box {
+        size 0.05 0.5 0.1
+      }
+    }
+  ]
+}
+DEF Beam Solid {
+  translation 0.45 0 0
+  children [
+    DEF BeamShape Shape {
+      appearance Appearance {
+        material Material {
+          emissiveColor 0.8 0.8 0.8
+        }
+      }
+      geometry Box {
+        size 0.1 0.5 0.05
+      }
+    }
+  ]
+}
+DEF Beam Solid {
+  translation -0.45 0 0
+  children [
+    DEF BeamShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.8 0.8 0.8
+        }
+      }
+      geometry Box {
+        size 0.1 0.5 0.05
+      }
+    }
+  ]
+}
+DEF platform Solid {
+  translation 0 0.25 0
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.8 0.8 0.8
+        }
+      }
+      geometry Box {
+        size 0.1 0.001 1.1
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.1 0.001 1.1
+  }
+}
+DEF platform Solid {
+  translation 0 0.25 0
+  rotation 0 1 0 1.5708
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.8 0.8 0.8
+        }
+      }
+      geometry Box {
+        size 0.1 0.001 1.1
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.1 0.001 1.1
+  }
+}
+DEF Wall_small Solid {
+  translation -0.05 0.2625 0.3
+  rotation 0 0 1 1.5708
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.025 0.001 0.5
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.025 0.001 0.5
+  }
+}
+DEF Wall_small Solid {
+  translation 0.05 0.2625 0.3
+  rotation 0 0 1 1.5708
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.025 0.001 0.5
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.025 0.001 0.5
+  }
+}
+DEF Wall_small Solid {
+  translation -0.05 0.2625 -0.3
+  rotation 0 0 1 1.5708
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.025 0.001 0.5
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.025 0.001 0.5
+  }
+}
+DEF Wall_small Solid {
+  translation 1.29428e-09 0.2625 -0.55
+  rotation 0.577349 0.577351 -0.577351 4.18879
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.025 0.001 0.1
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.025 0.001 0.1
+  }
+}
+DEF Wall_small Solid {
+  translation -1.45289e-08 0.2625 0.55
+  rotation 0.577349 0.577351 -0.577351 4.18879
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.025 0.001 0.1
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.025 0.001 0.1
+  }
+}
+DEF Wall_small Solid {
+  translation 0.05 0.2625 -0.3
+  rotation 0 0 1 1.5708
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.025 0.001 0.5
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.025 0.001 0.5
+  }
+}
+DEF Wall_big Solid {
+  translation 0.3 0.4 0.05
+  rotation 0.577349 0.577351 -0.577351 4.18879
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.3 0.001 0.5
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.3 0.001 0.5
+  }
+}
+DEF Wall_big Solid {
+  translation 0.3 0.4 -0.05
+  rotation 0.577349 0.577351 -0.577351 4.18879
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.3 0.001 0.5
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.3 0.001 0.5
+  }
+}
+DEF Wall_big Solid {
+  translation 0.55 0.400001 0
+  rotation -0.707106 -0.707108 -5.08576e-09 3.14159
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.3 0.001 0.1
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.3 0.001 0.1
+  }
+}
+DEF Wall_big Solid {
+  translation -0.55 0.399998 1.12429e-06
+  rotation -0.707106 -0.707108 -5.08576e-09 3.14159
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.3 0.001 0.1
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.3 0.001 0.1
+  }
+}
+DEF Wall_big Solid {
+  translation -0.3 0.399998 -0.05
+  rotation 0.577349 0.577351 -0.577351 4.18879
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.3 0.001 0.5
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.3 0.001 0.5
+  }
+}
+DEF Wall_big Solid {
+  translation -0.3 0.399998 0.05
+  rotation 0.577349 0.577351 -0.577351 4.18879
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.6 0.6 0.6
+          emissiveColor 0.6 0.6 0.6
+        }
+      }
+      geometry Box {
+        size 0.3 0.001 0.5
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.3 0.001 0.5
+  }
+}
