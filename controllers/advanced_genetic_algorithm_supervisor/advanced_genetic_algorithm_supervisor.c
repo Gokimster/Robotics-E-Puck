@@ -17,7 +17,8 @@ static const char *FILE_NAME = "fittest.txt";
 // must match the values in the advanced_genetic_algorithm.c code
 static const int NUM_SENSORS = 8;
 static const int NUM_WHEELS  = 2;
-#define GENOTYPE_SIZE (NUM_SENSORS * NUM_WHEELS)
+static const int NUM_HIDDEN = 4;
+#define GENOTYPE_SIZE (NUM_SENSORS * NUM_HIDDEN + NUM_HIDDEN * NUM_WHEELS)
 
 // index access
 enum { X, Y, Z };
