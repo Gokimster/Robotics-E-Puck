@@ -36,10 +36,7 @@ static WbFieldRef robot_translation;
 static WbFieldRef robot_rotation;
 static double robot_trans0[3];  // a translation needs 3 doubles
 static double robot_rot0[4];    // a rotation needs 4 doubles
-  
-// for reading or setting the load's position
-static WbFieldRef load_translation;
-static double load_trans0[3];
+
   
 // start with a demo until the user presses the 'O' key
 // (change this if you want)
@@ -81,12 +78,8 @@ void run_seconds(double seconds) {
   }
 }
 
-// compute fitness as the euclidian distance that the load was pushed
 double measure_fitness() {
-  const double *load_trans = wb_supervisor_field_get_sf_vec3f(load_translation);
-  double dx = load_trans[X] - load_trans0[X];
-  double dz = load_trans[Z] - load_trans0[Z];
-  return sqrt(dx * dx + dz * dz);
+  return 1;
 }
 
 // evaluate one genotype at a time
@@ -95,10 +88,9 @@ void evaluate_genotype(Genotype genotype) {
   // send genotype to robot for evaluation
   wb_emitter_send(emitter, genotype_get_genes(genotype), GENOTYPE_SIZE * sizeof(double));
   
-  // reset robot and load position
+  // reset robot  position
   wb_supervisor_field_set_sf_vec3f(robot_translation, robot_trans0);
   wb_supervisor_field_set_sf_rotation(robot_rotation, robot_rot0);
-  wb_supervisor_field_set_sf_vec3f(load_translation, load_trans0);
 
   // evaluation genotype during one minute
   run_seconds(60.0);
@@ -205,11 +197,6 @@ int main(int argc, const char *argv[]) {
   robot_rotation = wb_supervisor_node_get_field(robot, "rotation");
   memcpy(robot_trans0, wb_supervisor_field_get_sf_vec3f(robot_translation), sizeof(robot_trans0));
   memcpy(robot_rot0, wb_supervisor_field_get_sf_rotation(robot_rotation), sizeof(robot_rot0));
-
-  // find load node and store initial position
-  WbNodeRef load = wb_supervisor_node_get_from_def("LOAD");
-  load_translation = wb_supervisor_node_get_field(load, "translation");
-  memcpy(load_trans0, wb_supervisor_field_get_sf_vec3f(load_translation), sizeof(load_trans0));
   
   if (demo)
     run_demo();
