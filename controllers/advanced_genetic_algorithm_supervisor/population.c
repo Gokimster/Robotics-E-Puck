@@ -7,6 +7,7 @@
 
 // part of the population that is cloned from one generation to the next
 static const double ELITE_PART = 0.1;
+static const int TOURNAMENT_SIZE = 5;
 
 struct _Population_ {
   Genotype *genotypes;  // genotypes
@@ -42,9 +43,21 @@ Genotype population_select_parent(Population p) {
   }
 }
 
+
 // comparison function for qsort()
 static int compare_genotype(const void *a, const void *b) {
   return genotype_get_fitness(*((Genotype*)a)) > genotype_get_fitness(*((Genotype*)b)) ? -1 : +1;
+}
+
+Genotype population_select_parent_tournament(Population p)
+{
+  Genotype *tournament = malloc(TOURNAMENT_SIZE * sizeof(Genotype));
+  for(int i = 0; i < TOURNAMENT_SIZE; i++)
+  {
+    tournament[i] = population_select_parent(p);
+  }
+  qsort(tournament, TOURNAMENT_SIZE, sizeof(Genotype), compare_genotype);
+  return tournament[0];
 }
 
 void population_reproduce(Population p) {
@@ -65,8 +78,8 @@ void population_reproduce(Population p) {
     else {
       // sexual reproduction
       // or asexual if both parents are the same individual
-      Genotype mom = population_select_parent(p);
-      Genotype dad = population_select_parent(p);
+      Genotype mom = population_select_parent_tournament(p);
+      Genotype dad = population_select_parent_tournament(p);
       child = genotype_crossover(mom, dad); 
       genotype_mutate(child);
     }
