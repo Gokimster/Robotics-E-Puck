@@ -2,15 +2,15 @@
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.0555275 -0.740631 -0.669614 3.07086
-  position -0.202724 1.92078 -0.0689382
+  orientation 0.274625 0.838681 0.470314 4.3544
+  position -1.07114 1.605 -0.109
 }
 DirectionalLight {
   direction -0.3 -0.9 0
 }
 Background {
   skyColor [
-    1 1 1
+    0.8 0.8 1
   ]
 }
 DEF GA Supervisor {
