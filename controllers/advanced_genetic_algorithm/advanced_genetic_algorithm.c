@@ -7,16 +7,18 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 #define NUM_SENSORS 8
 #define NUM_WHEELS 2
 #define NUM_HIDDEN 4
-#define GENOTYPE_SIZE (NUM_SENSORS * NUM_HIDDEN + NUM_HIDDEN * NUM_WHEELS)
+#define GENOTYPE_SIZE (NUM_SENSORS * NUM_HIDDEN + NUM_HIDDEN * NUM_WHEELS + NUM_HIDDEN * NUM_HIDDEN)
 
 // sensor to wheels multiplication matrix
 // each each sensor has a weight for each wheel
-double matrix[NUM_SENSORS + NUM_HIDDEN][NUM_HIDDEN]; 
+double matrix[NUM_SENSORS + NUM_HIDDEN + NUM_HIDDEN][NUM_HIDDEN]; 
 double hidden[NUM_HIDDEN];
+double rec[NUM_HIDDEN];
 WbDeviceTag sensors[NUM_SENSORS];  // proximity sensors
 WbDeviceTag receiver;              // for receiving genes from Supervisor
 
@@ -32,6 +34,8 @@ void check_for_new_genes() {
     // it's the GA's responsability to find a functional mapping
     const double *data = wb_receiver_get_data(receiver);
     //memcpy(matrix, wb_receiver_get_data(receiver), GENOTYPE_SIZE * sizeof(double));
+
+    //input to hidden layer
     for(int i = 0; i < NUM_SENSORS; i++)
     {
       for(int j = 0; j < NUM_HIDDEN; j++)
@@ -40,6 +44,8 @@ void check_for_new_genes() {
         data++;
       }
     }
+
+    //hidden layer to output
     for(int i = NUM_SENSORS; i < NUM_SENSORS + NUM_HIDDEN; i++)
     {
       for(int j = 0; j < NUM_WHEELS; j++)
@@ -48,6 +54,17 @@ void check_for_new_genes() {
         data++;
       }
     }
+
+    //recurssive context layer to hidden layer
+    for(int i = NUM_SENSORS + NUM_HIDDEN; i < NUM_SENSORS + NUM_HIDDEN + NUM_HIDDEN; i++)
+    {
+      for (int j = 0; j < NUM_HIDDEN; j++)
+      {
+        matrix[i][j] = *data;
+        data++;
+      }
+    }
+
     
     // prepare for receiving next genes packet
     wb_receiver_next_packet(receiver);
@@ -77,6 +94,7 @@ void sense_compute_and_actuate() {
   double wheel_speed[NUM_WHEELS] = { 0.0, 0.0 };
   memset(hidden, 0.0, sizeof(hidden));
   
+  //input to hidden
   for(int i = 0; i < NUM_HIDDEN; i++)
   {
     hidden[i] = 0;
@@ -85,12 +103,31 @@ void sense_compute_and_actuate() {
       hidden[i] += sensor_values[j] * matrix[j][i]; 
     }
   }
+
+  //recurssive to hidden
+  for(int i = 0; i < NUM_HIDDEN; i++)
+  {
+    for (int j = 0; j < NUM_HIDDEN; j++)
+    {
+      hidden[i] += rec[j] * matrix[NUM_SENSORS + NUM_HIDDEN + j][i];
+    }
+    hidden[i] = tanh(hidden[i]);
+  }
+
+  //hidden to recursive
+  for(int i = 0; i < NUM_HIDDEN; i++)
+  {
+    rec[i] = hidden[i];
+  }
+
+  //hidden to output
   for(int i =0; i <NUM_WHEELS; i++)
   {
     for (int j = 0; j < NUM_HIDDEN; j++)
     {
       wheel_speed[i] += matrix[j + NUM_SENSORS][i] * hidden[j];
     }
+    wheel_speed[i] = tanh(wheel_speed[i]) * 1000;
   }
   
   // clip to e-puck max speed values to avoid warning
@@ -126,6 +163,8 @@ int main(int argc, const char *argv[]) {
   memset(matrix, 0.0, sizeof(matrix));
 
   memset(hidden, 0.0, sizeof(hidden));
+
+  memset(rec, 0.0, sizeof(rec));
   
   // run until simulation is restarted
   while (wb_robot_step(time_step) != -1) {

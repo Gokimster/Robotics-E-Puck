@@ -4,7 +4,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 0.274625 0.838681 0.470314 4.3544
-  position -1.27891 1.87356 -0.126575
+  position -1.02225 1.54182 -0.104865
 }
 DirectionalLight {
   direction -0.3 -0.9 0
@@ -27,7 +27,7 @@ DEF GA Supervisor {
   controller "advanced_genetic_algorithm_supervisor"
 }
 DEF ROBOT E-puck {
-  translation 0.47 0.25 0
+  translation 0.47 0.26 0
   rotation 0 -1 0 4.71239
   controller "advanced_genetic_algorithm"
 }
@@ -95,22 +95,39 @@ DEF Beam Solid {
   ]
 }
 DEF platform Solid {
-  translation 0 0.25 0
+  translation 0 0.25 -0.3
   children [
     DEF PlatformShape Shape {
       appearance Appearance {
         material Material {
-          diffuseColor 0.6 0.6 0.6
-          emissiveColor 0.8 0.8 0.8
+          diffuseColor 0 0 0
         }
       }
       geometry Box {
-        size 0.1 0.001 1.1
+        size 0.1 0.001 0.5
       }
     }
   ]
   boundingObject Box {
-    size 0.1 0.001 1.1
+    size 0.1 0.001 0.5
+  }
+}
+DEF platform Solid {
+  translation 0 0.25 0.3
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0 0 0
+        }
+      }
+      geometry Box {
+        size 0.1 0.001 0.5
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.1 0.001 0.5
   }
 }
 DEF platform Solid {

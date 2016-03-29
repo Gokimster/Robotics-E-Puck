@@ -2,6 +2,7 @@
 
 #include "genotype.h"
 #include "population.h"
+#include "random.h"
 #include <webots/supervisor.h>
 #include <webots/robot.h>
 #include <webots/emitter.h>
@@ -12,7 +13,7 @@
 
 #define SIZE 10
 
-static const int POPULATION_SIZE = 50;
+static const int POPULATION_SIZE = 10;
 static const int NUM_GENERATIONS = 25;
 static const char *FILE_NAME = "fittest.txt";
 
@@ -20,7 +21,7 @@ static const char *FILE_NAME = "fittest.txt";
 static const int NUM_SENSORS = 8;
 static const int NUM_WHEELS  = 2;
 static const int NUM_HIDDEN = 4;
-#define GENOTYPE_SIZE (NUM_SENSORS * NUM_HIDDEN + NUM_HIDDEN * NUM_WHEELS)
+#define GENOTYPE_SIZE (NUM_SENSORS * NUM_HIDDEN + NUM_HIDDEN * NUM_WHEELS + NUM_HIDDEN * NUM_HIDDEN)
 
 // index access
 enum { X, Y, Z };
@@ -45,18 +46,39 @@ static double robot_rot0[4];    // a rotation needs 4 doubles
 static bool demo = false;
 
 int top;
-double arrdx[SIZE];
-double arrdz[SIZE];
+int curr = 0;
+int steps_till_remove = 100;
+int stepsSince[SIZE];
+int arr[SIZE];
 
 
-void add(double x, double z)
+void add(int x)
 {
- arrdx[top]=x;
-  arrdz[top]=z;
-  if(top==SIZE){
-	  top=0;
-  }else{
-	top++;
+ if(top < SIZE)
+ {
+  arr[top] = x;
+  stepsSince[top++] = steps_till_remove;
+ }else{
+  if(curr >= SIZE)
+    curr -= SIZE;
+  arr[curr] = x;
+  stepsSince[curr++] = steps_till_remove;
+ }
+}
+
+void checkRemoveAreas()
+{
+  for(int i = 0; i<top; i++)
+  {
+    if((top < SIZE && i != top - 1) || i != curr - 1)
+    {
+      stepsSince[i]--;
+      if(stepsSince[i] == 0)
+      {
+        arr[i] = -1;
+        stepsSince[i] = -1;
+      }
+     }
   }
 }
 
@@ -88,44 +110,77 @@ void plot_fitness(int generation, double best_fitness, double average_fitness) {
 
 double measure_fitness(){
 
-int i;
-double explore = 0.0;
-double fear= 0.0;
-double beta = 5.0;
+  int i;
+  double explore = 0.0;
+  double fear = 0.0;
+  double beta = 5.0;
+  double cell_size = 0.1;
+  double arm_size = 0.5;
+  double centerSize = 0.1;
+  int position = 1; // 0 = open arm, 1 = closed ar, 2 = center
 
-const double *load_trans = wb_supervisor_field_get_sf_vec3f(robot_translation);
-double dx = load_trans[X];
-double dz = load_trans[Z];
+  const double *load_trans = wb_supervisor_field_get_sf_vec3f(robot_translation);
+  double dx = load_trans[X];
+  double dz = load_trans[Z];
 
-/********** Exploration fitness *******/
+  /********** Exploration fitness *******/
 
-for(i=0;i<top;i++){
-  if(dx==arrdx[i] && dz==arrdz[i])
-      explore = 0.0;
-else
-    explore = 1.0;	
-}	
+  int area = 0;
+  if(fabs(dx)< centerSize/2)
+  {
+    position = 0;
+    if(fabs(dz) < centerSize/2)
+    {
+      position = 2;
+    }
+  }
+  //printf("\n position is %d ", position);
+  if(position == 1)
+  {
+    area = (int)(dx / cell_size) + (int)(arm_size/cell_size) + 1;
+  }
+  if(position == 0)
+  {
+    area = (int)(dz / cell_size) + ((int)(arm_size/cell_size) * 3) + 1;
+  }
 
-/************* Fear Fitness ***********/
-
-// Closed Arm test coords of the closed arms of the maze
-if(((dx<=-0.05) && (dx>=0.05)) && ((dz<=-0.001) && (dz>=0.5) || (dz<=-0.5) && (dz>=0.001)))
-	fear = 0.012;
-// Middle test coord of the middle of the maze
-if(((dx>=-0.05) && (dx<=0.05)) && ((dz>=-0.05) && (dz<=0.05)))
-	fear = 0.011;
-// Open arm test
-if(((dz<=-0.05) && (dz>=0.05)) && ((dx<=-0.001) && (dx>=0.5) || (dx=-0.5) && (dx>=0.001)))
-  fear = 0.015;
-
-fear = fear * beta;
-
-/* update the stack */
-add(dx,dz);
-
-
-/* Return the fitness */
-return explore + fear;
+  explore = 1.0;  
+  int found = 0;
+  for(i=0;i<top;i++){
+    if(area == arr[i])
+    {
+        explore = 0.0;
+        found = 1;
+        break;
+    }
+  }	
+  //printf("\n FOUND is %d ", found);
+  //printf("\n area is %d ", area);
+  if(found == 0)
+  {
+    add(area);
+    // Closed Arm test coords of the closed arms of the maze
+    if(position == 1)
+      fear = 0.05;
+    // Middle test coord of the middle of the maze
+    if(position == 2)
+      fear = 0.1;
+    // Open arm test
+    if(position == 0)
+      fear = 0.5;
+      
+    if(random_get_uniform() <fear)
+    {
+      fear = -1;
+    }else{
+      fear = 0;
+    }
+    
+    fear *= beta;
+  }
+  checkRemoveAreas();
+  /* Return the fitness */
+  return explore + fear;
 }
 
 double run_seconds(double seconds) {
