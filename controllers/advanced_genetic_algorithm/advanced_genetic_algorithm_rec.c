@@ -108,8 +108,9 @@ void sense_compute_and_actuate() {
   {
     for (int j = 0; j < NUM_HIDDEN; j++)
     {
-      hidden[j] += rec[i] * matrix[NUM_SENSORS + NUM_HIDDEN + i][j];
+      hidden[i] += rec[j] * matrix[NUM_SENSORS + NUM_HIDDEN + j][i];
     }
+    hidden[i] = tanh(hidden[i]);
   }
 
   //hidden to recursive
@@ -125,6 +126,7 @@ void sense_compute_and_actuate() {
     {
       wheel_speed[i] += matrix[j + NUM_SENSORS][i] * hidden[j];
     }
+    wheel_speed[i] = tanh(wheel_speed[i]) * 1000;
   }
   
   // clip to e-puck max speed values to avoid warning

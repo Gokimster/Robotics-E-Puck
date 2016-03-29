@@ -1,9 +1,10 @@
 #VRML_SIM V8.3.0 utf8
 WorldInfo {
+  gravity 0 -9.8 0
 }
 Viewpoint {
   orientation 0.274625 0.838681 0.470314 4.3544
-  position -1.07114 1.605 -0.109
+  position -1.27891 1.87356 -0.126575
 }
 DirectionalLight {
   direction -0.3 -0.9 0
@@ -110,6 +111,24 @@ DEF platform Solid {
   ]
   boundingObject Box {
     size 0.1 0.001 1.1
+  }
+}
+DEF platform Solid {
+  translation 0 -0.25 0
+  children [
+    DEF PlatformShape Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.9 0.9 1
+        }
+      }
+      geometry Box {
+        size 10 0.001 10
+      }
+    }
+  ]
+  boundingObject Box {
+    size 10 0.001 10
   }
 }
 DEF platform Solid {
