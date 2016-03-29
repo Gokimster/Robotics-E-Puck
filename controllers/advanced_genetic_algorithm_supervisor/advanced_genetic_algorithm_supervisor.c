@@ -10,6 +10,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#define SIZE 10
+
 static const int POPULATION_SIZE = 50;
 static const int NUM_GENERATIONS = 25;
 static const char *FILE_NAME = "fittest.txt";
@@ -42,6 +44,22 @@ static double robot_rot0[4];    // a rotation needs 4 doubles
 // (change this if you want)
 static bool demo = false;
 
+int top;
+double arrdx[SIZE];
+double arrdz[SIZE];
+
+
+void add(double x, double z)
+{
+ arrdx[top]=x;
+  arrdz[top]=z;
+  if(top==SIZE){
+	  top=0;
+  }else{
+	top++;
+  }
+}
+
 void draw_scaled_line(int generation, double y1, double y2) {
   const double XSCALE = (double)display_width / NUM_GENERATIONS;
   const double YSCALE = 10.0;
@@ -66,20 +84,63 @@ void plot_fitness(int generation, double best_fitness, double average_fitness) {
 }
  
 // run the robot simulation for the specified number of seconds
-void run_seconds(double seconds) {
+
+
+double measure_fitness(){
+
+int i;
+double explore = 0.0;
+double fear= 0.0;
+double beta = 5.0;
+
+const double *load_trans = wb_supervisor_field_get_sf_vec3f(robot_translation);
+double dx = load_trans[X];
+double dz = load_trans[Z];
+
+/********** Exploration fitness *******/
+
+for(i=0;i<top;i++){
+  if(dx==arrdx[i] && dz==arrdz[i])
+      explore = 0.0;
+else
+    explore = 1.0;	
+}	
+
+/************* Fear Fitness ***********/
+
+// Closed Arm test coords of the closed arms of the maze
+if(((dx<=-0.05) && (dx>=0.05)) && ((dz<=-0.001) && (dz>=0.5) || (dz<=-0.5) && (dz>=0.001)))
+	fear = 0.012;
+// Middle test coord of the middle of the maze
+if(((dx>=-0.05) && (dx<=0.05)) && ((dz>=-0.05) && (dz<=0.05)))
+	fear = 0.011;
+// Open arm test
+if(((dz<=-0.05) && (dz>=0.05)) && ((dx<=-0.001) && (dx>=0.5) || (dx=-0.5) && (dx>=0.001)))
+  fear = 0.015;
+
+fear = fear * beta;
+
+/* update the stack */
+add(dx,dz);
+
+
+/* Return the fitness */
+return explore + fear;
+}
+
+double run_seconds(double seconds) {
+double total_fitness = 0.0;
   int i, n = 1000.0 * seconds / time_step;
   for (i = 0; i < n; i++) {
     if (demo && wb_robot_keyboard_get_key() == 'O') {
       demo = false;
-      return; // interrupt demo and start GA optimization
+      return total_fitness; // interrupt demo and start GA optimization
     }
 
     wb_robot_step(time_step);
+    total_fitness += measure_fitness();
   }
-}
-
-double measure_fitness() {
-  return 1;
+  return total_fitness;
 }
 
 // evaluate one genotype at a time
@@ -91,12 +152,9 @@ void evaluate_genotype(Genotype genotype) {
   // reset robot  position
   wb_supervisor_field_set_sf_vec3f(robot_translation, robot_trans0);
   wb_supervisor_field_set_sf_rotation(robot_rotation, robot_rot0);
-
-  // evaluation genotype during one minute
-  run_seconds(60.0);
   
   // measure fitness
-  double fitness = measure_fitness();
+  double fitness = run_seconds(60.0);
   genotype_set_fitness(genotype, fitness);
 
   printf("fitness: %g\n", fitness);
@@ -172,7 +230,7 @@ void run_demo() {
 }
 
 int main(int argc, const char *argv[]) {
-  
+
   // initialize Webots
   wb_robot_init();
   

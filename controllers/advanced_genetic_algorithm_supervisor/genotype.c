@@ -12,6 +12,8 @@ struct _Genotype_ {
   double fitness;  // fitness
 };
 
+
+
 static int genotype_size = -1;
 
 int genotype_get_size() {
