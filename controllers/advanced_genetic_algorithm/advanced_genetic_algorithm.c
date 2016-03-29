@@ -84,6 +84,7 @@ void sense_compute_and_actuate() {
     {
       hidden[i] += sensor_values[j] * matrix[j][i]; 
     }
+    hidden[i] = tanh(hidden[i]);
   }
   for(int i =0; i <NUM_WHEELS; i++)
   {
@@ -91,6 +92,7 @@ void sense_compute_and_actuate() {
     {
       wheel_speed[i] += matrix[j + NUM_SENSORS][i] * hidden[j];
     }
+    wheel_speed[i] = tanh(wheel_speed[i]) * 1000;
   }
   
   // clip to e-puck max speed values to avoid warning
