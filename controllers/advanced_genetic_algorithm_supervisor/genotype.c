@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-static const double MUTATION_PROBABLITY = 0.06;
+static const double MUTATION_PROBABLITY = 0.6;
 static const double MUTATION_DEVIATION  = 0.2;
 
 struct _Genotype_ {

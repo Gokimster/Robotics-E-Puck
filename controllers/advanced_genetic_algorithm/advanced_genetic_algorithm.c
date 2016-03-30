@@ -80,6 +80,20 @@ static double clip_value(double value, double min_max) {
   return value;
 }
 
+float sigmoid(float x)
+{
+     float exp_value;
+     float return_value;
+
+     /*** Exponential calculation ***/
+     exp_value = exp((double) -x);
+
+     /*** Final sigmoid value ***/
+     return_value = 1 / (1 + exp_value);
+
+     return return_value;
+}
+
 void sense_compute_and_actuate() {
   // read sensor values
   // compute actuation using Braitenberg's algorithm:
@@ -111,7 +125,7 @@ void sense_compute_and_actuate() {
     {
       hidden[i] += rec[j] * matrix[NUM_SENSORS + NUM_HIDDEN + j][i];
     }
-    hidden[i] = tanh(hidden[i]);
+    hidden[i] = sigmoid(hidden[i]);
   }
 
   //hidden to recursive
@@ -127,7 +141,7 @@ void sense_compute_and_actuate() {
     {
       wheel_speed[i] += matrix[j + NUM_SENSORS][i] * hidden[j];
     }
-    wheel_speed[i] = tanh(wheel_speed[i]) * 1000;
+    wheel_speed[i] = sigmoid(wheel_speed[i]) * 1000;
   }
   
   // clip to e-puck max speed values to avoid warning

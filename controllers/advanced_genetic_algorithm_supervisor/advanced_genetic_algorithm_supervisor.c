@@ -13,7 +13,7 @@
 
 #define SIZE 10
 
-static const int POPULATION_SIZE = 10;
+static const int POPULATION_SIZE = 50;
 static const int NUM_GENERATIONS = 25;
 static const char *FILE_NAME = "fittest.txt";
 
@@ -144,7 +144,7 @@ double measure_fitness(){
     area = (int)(dz / cell_size) + ((int)(arm_size/cell_size) * 3) + 1;
   }
 
-  explore = 1.0;  
+  explore = 10.0;  
   int found = 0;
   for(i=0;i<top;i++){
     if(area == arr[i])
